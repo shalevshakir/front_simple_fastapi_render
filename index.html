@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Frontend</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>FastAPI Frontend</h1>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" required>
+    <br>
+    <button id="createItemButton">Create Item</button>
+    <br><br>
+    <label for="itemId">Item ID:</label>
+    <input type="text" id="itemId" name="itemId" required>
+    <br>
+    <button id="readItemButton">Read Item</button>
+    <button id="updateItemButton">Update Item</button>
+    <button id="deleteItemButton">Delete Item</button>
+    <br><br>
+    <button id="readAllItemsButton">Read All Items</button>
+    <ul id="itemsList"></ul>
+
+    <script>
+        const apiUrl = 'https://backend-simple-crud-fastapi.onrender.com';
+
+        document.getElementById('createItemButton').addEventListener('click', function() {
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+
+            axios.post(apiUrl, {
+                name: name,
+                description: description
+            })
+            .then(function (response) {
+                console.log(response);
+                alert('Item created successfully!');
+            })
+            .catch(function (error) {
+                console.error(error);
+                alert('Error creating item.');
+            });
+        });
+
+        document.getElementById('readItemButton').addEventListener('click', function() {
+            const itemId = document.getElementById('itemId').value;
+
+            axios.get(apiUrl + itemId)
+            .then(function (response) {
+                console.log(response);
+                alert('Item details: ' + JSON.stringify(response.data));
+            })
+            .catch(function (error) {
+                console.error(error);
+                alert('Error reading item.');
+            });
+        });
+
+        document.getElementById('updateItemButton').addEventListener('click', function() {
+            const itemId = document.getElementById('itemId').value;
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+
+            axios.put(apiUrl + itemId, {
+                name: name,
+                description: description
+            })
+            .then(function (response) {
+                console.log(response);
+                alert('Item updated successfully!');
+            })
+            .catch(function (error) {
+                console.error(error);
+                alert('Error updating item.');
+            });
+        });
+
+        document.getElementById('deleteItemButton').addEventListener('click', function() {
+            const itemId = document.getElementById('itemId').value;
+
+            axios.delete(apiUrl + itemId)
+            .then(function (response) {
+                console.log(response);
+                alert('Item deleted successfully!');
+            })
+            .catch(function (error) {
+                console.error(error);
+                alert('Error deleting item.');
+            });
+        });
+
+        document.getElementById('readAllItemsButton').addEventListener('click', function() {
+            axios.get(apiUrl)
+            .then(function (response) {
+                console.log(response);
+                const itemsList = document.getElementById('itemsList');
+                itemsList.innerHTML = '';
+                response.data.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `ID: ${item.id}, Name: ${item.name}, Description: ${item.description}`;
+                    itemsList.appendChild(listItem);
+                });
+            })
+            .catch(function (error) {
+                console.error(error);
+                alert('Error fetching items.');
+            });
+        });
+    </script>
+</body>
+</html>
